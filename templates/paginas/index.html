@@ -1,0 +1,90 @@
+{% extends 'base.html' %} 
+
+{% load humanize %}
+
+{% block title %} | Bem Vindo {% endblock %}
+
+{% block content %}
+<!-- Showcase -->
+<section id="showcase">
+    <div class="container text-center">
+      <div class="home-search p-5">
+        <div class="overlay p-5">
+          <h1 class="display-4 mb-4">
+            CAE-Web - Sistema de Fiscalização
+          </h1>
+          <p class="lead">Faça a Busca dos Relatórios Cadastrados no Sistema</p>
+          {% if user.is_authenticated %}
+            <div class="search">
+              <div class="container">
+                <div class="row text-center">
+                  <div class="col-md-12">
+                    <form action="{% url 'relatorios:search' %}">
+                      <!-- Form Row 1 -->
+                      <div class="form-row">
+                        <div class="col-md-6 mb-3">
+                          <label class="sr-only">Keywords</label>
+                          <input type="text" name="keywords" class="form-control" placeholder="Busca por nome do Relatório" value="{{ values.keywords }}">
+                        </div>
+          
+                        <div class="col-md-6 mb-3">
+                          <label class="sr-only">Escola</label>
+                          <input type="text" name="escola" class="form-control" placeholder="Busca por nome da Escola" value="{{ values.escola }}">
+                        </div>
+                      </div>
+          
+          
+                      <button class="btn btn-secondary btn-block mt-4" type="submit">Buscar</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </section>
+<br>
+  <!-- Alerts -->
+  {% include 'partials/_alerts.html' %}
+
+  <!-- Relatorios -->
+  <section id="listings" class="py-5">
+    <div class="container">
+      <h3 class="text-center mb-3">CAE-Web</h3>
+      <div class="row">
+
+
+      </div>
+    </div>
+  </section>
+
+  <section id="services" class="py-5 bg-secondary text-white">
+    <div class="container">
+      <div class="row text-center">
+        <div class="col-md-4">
+          <i class="fas fa-book fa-4x mr-4"></i>
+          <hr>
+          <h3>Cadastro</h3>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt, debitis nam! Repudiandae, provident iste consequatur
+            hic dignissimos ratione ea quae.</p>
+        </div>
+        <div class="col-md-4">
+          <i class="fas fa-graduation-cap fa-4x mr-4"></i>
+          <hr>
+          <h3>Emissão de Relatórios</h3>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt, debitis nam! Repudiandae, provident iste consequatur
+            hic dignissimos ratione ea quae.</p>
+        </div>
+        <div class="col-md-4">
+          <i class="fas fa-user fa-4x mr-4"></i>
+          <hr>
+          <h3>Consulta Online</h3>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt, debitis nam! Repudiandae, provident iste consequatur
+            hic dignissimos ratione ea quae.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

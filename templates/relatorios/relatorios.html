@@ -1,0 +1,49 @@
+{% extends 'base.html' %} 
+
+{% load humanize %}
+
+{% block title %} | Relatórios {% endblock %}
+
+{% block content %}
+
+    <!-- Alerts -->
+    {% include 'partials/_alerts.html' %}
+
+    {% if relatorios %}
+        <h1 class="text-center mb-3">Lista dos Relatórios</h1>
+        {% for relatorio in relatorios %}
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 mb-4">
+                        <div class="card listing-preview">
+                            <div class="card-body">
+                            <div class="listing-heading text-center text-md-left d-md-flex align-items-md-center">
+                                <i class="fas fa-book mr-md-2"></i>
+                                <h5 class="text-primary mb-0">{{ relatorio.titulo }}</h5>
+                                <p>
+                            </div>
+                            <hr>
+                            <div class="row py-2">
+                                <div class="col-6">
+                                <i class="fas fa-graduation-cap text-primary"></i> Escola: {{ relatorio.escola }}</div>
+                                <div class="col-6">
+                                <i class="fas fa-user"></i> Representante CAE: {{ relatorio.cae_rep }}</div>
+                            </div>
+                            <div class="row py-2">
+                                <div class="col-6">
+                                <i class="fas fa-user text-primary"></i> Representante Escola: {{ relatorio.escola_rep }}</div>
+                                <div class="col-6">
+                                <i class="fas fa-user-tie"></i> Diretor Escola: {{ relatorio.escola_direcao }}</div>
+                            </div>
+                            <hr>
+                            <a href="/relatorios/{{ relatorio.id }}" class="btn btn-primary">Mais Informações</a>
+                            
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+{% endblock %}

@@ -1,0 +1,331 @@
+{% extends 'base.html' %}
+
+{% load humanize %}
+
+{% block title %} | {{ listing.title }} {% endblock %}
+
+{% block content %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="card-body">
+                    <form action="{% url 'relatorios:cadastro' %}" method="POST">
+                          {% csrf_token %}
+                          {% if user.is_authenticated %}
+                              <input type="hidden" name="user_id" value="{{ user.id }}">
+                          {% else %}
+                              <input type="hidden" name="user_id" value="0">
+                          {% endif %}
+
+                          <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
+                            <li class="nav-item">
+                              <a class="nav-link active" id="info-tab" data-toggle="tab" href="#info" role="tab" aria-controls="info" aria-selected="true">Informações Básicas</a>
+                            </li>
+                            {% for qsection in qsections %}
+                              {% if qsection.section_name|lower == 'Documentação'|lower %}
+                                <li class="nav-item">
+                                  <a class="nav-link" id="profile-tab" data-toggle="tab" href="#documentacao" role="tab" aria-controls="profile" aria-selected="false">Documentação</a>
+                                </li>
+                              {% endif %}
+                              {% if qsection.section_name|lower == 'Cozinha'|lower %}
+                                <li class="nav-item">
+                                  <a class="nav-link" id="profile-tab" data-toggle="tab" href="#cozinha" role="tab" aria-controls="profile" aria-selected="false">Cozinha</a>
+                                </li>
+                              {% endif %}
+                              {% if qsection.section_name|lower == 'Despensa'|lower %}
+                                <li class="nav-item">
+                                  <a class="nav-link" id="profile-tab" data-toggle="tab" href="#despensa" role="tab" aria-controls="profile" aria-selected="false">Despensa</a>
+                                </li>
+                              {% endif %}
+                              {% if qsection.section_name|lower == 'Alimentação'|lower %}
+                                <li class="nav-item">
+                                  <a class="nav-link" id="profile-tab" data-toggle="tab" href="#alimentacao" role="tab" aria-controls="profile" aria-selected="false">Alimentação</a>
+                                </li>
+                              {% endif %}
+                              {% if qsection.section_name|lower == 'Armazenamento'|lower %}
+                                <li class="nav-item">
+                                  <a class="nav-link" id="profile-tab" data-toggle="tab" href="#armazenamento" role="tab" aria-controls="profile" aria-selected="false">Armazenamento</a>
+                                </li>
+                              {% endif %}
+                              {% if qsection.section_name|lower == 'Sobre os Atendentes'|lower %}
+                                <li class="nav-item">
+                                  <a class="nav-link" id="profile-tab" data-toggle="tab" href="#sobre_atendentes" role="tab" aria-controls="profile" aria-selected="false">Sobre os Atendentes</a>
+                                </li>
+                              {% endif %}
+                              {% if qsection.section_name|lower == 'Informações dos Atendentes'|lower %}
+                                <li class="nav-item">
+                                  <a class="nav-link" id="profile-tab" data-toggle="tab" href="#info_atendentes" role="tab" aria-controls="profile" aria-selected="false">'Informações dos Atendentes</a>
+                                </li>
+                              {% endif %}
+                            {% endfor %}
+                            <li class="nav-item">
+                              <a class="nav-link" id="contact-tab" data-toggle="tab" href="#anexos" role="tab" aria-controls="enviar" aria-selected="false">Anexos</a>
+                            </li>
+                          </ul>
+                          <div class="tab-content" id="myTabContent">
+                              <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
+                                <div class="form-group">
+                                  <label for="relatorio_titulo" class="col-form-label">Título do Relatório:</label>
+                                  <input type="text" name="titulo" class="form-control" value="{{ relatorio.titulo }}" required>
+                                </div>
+                                <div class="form-group">
+                                  <label for="escola_nome" class="col-form-label">Escola:</label>
+                                  <select name="lista_escolas" id="lista_escolas" class="p-1">
+                                    {% for escola in escolas %}
+                                      <option value="{{ escola.pk }}">{{ escola.nome }}</option>
+                                    {% endfor %}
+                                  </select>
+                                </div>
+                                <div class="form-group">
+                                  <label for="cae_rep_name" class="col-form-label">Representante CAE:</label>
+                                  <input type="text" name="cae_rep" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                  <label for="escola_rep_name" class="col-form-label">Representante da Escola:</label>
+                                  <input type="text" name="escola_rep" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                  <label for="escola_direcao_nome" class="col-form-label">Nome do Diretor(a):</label>
+                                  <input type="text" name="escola_direcao" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                  <label for="campo_data_relatorio" class="col-form-label">Data:</label>
+                                  <input type="date" name="data_relatorio" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                  <label for="hora_inicio_nome" class="col-form-label">Horário da Visita: <br />Início:</label>
+                                  <input type="time" name="hora_inicio" class="form-control" required><span>Término:</span>
+                                  <input type="time" name="hora_fim" class="form-control" required>
+                                </div>
+                                <div class="form-group field-foto_principal">
+                                  <div>
+                                    <label for="id_foto_principal">Foto principal:</label>
+                                    <input type="file" name="foto_principal" accept="image/*" id="id_foto_principal">
+                                  </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="documentacao" role="tabpanel" aria-labelledby="profile-tab">
+                              {% for question in questions %}
+                                      {% if question.qsection|lower == 'Documentação'|lower %}
+                                        <div class="form-group">
+                                          <label for="question_text" class="col-form-label">{{ question.question_text }}</label>
+                                          <div>
+                                            {% for choice in choices %}
+                                              {% if choice.question == question %}
+                                                <input type="radio" id="id_choice-{{ choice.question.id }}" name="choice-{{choice.question.id}}" value="{{ choice }}">
+                                                <label for="id_choice-{{ choice.question.id }}">{{ choice }}</label><br>
+                                              {% endif %}
+                                            {% endfor %}
+                                          </div>
+                                        </div>
+                                        <div class="form-group">
+                                          <label for="orientacoes" class="col-form-label">Orientações:</label>
+                                          <input type="text" name="orientacoes-{{question.id}}" class="form-control">
+                                        </div>
+                                        <div class="form-group">
+                                          <label for="vencimento" class="col-form-label">Vencimento:</label>
+                                          <input type="date" name="vencimento-{{question.id}}" class="form-control">
+                                        </div>
+                                        <div class="form-group">
+                                          <label for="comentario" class="col-form-label">Observação:</label>
+                                          <input type="text" name="comentario-{{question.id}}" class="form-control">
+                                        </div>
+                                        {% endif %}
+                                  {% endfor %}
+                            </div>
+                            <div class="tab-pane fade" id="cozinha" role="tabpanel" aria-labelledby="profile-tab">
+                            {% for question in questions %}
+                                {% if question.qsection|lower == 'Cozinha'|lower %}
+                                  <div class="form-group">
+                                    <label for="question_text" class="col-form-label">{{ question.question_text }}</label>
+                                    <div>
+                                      {% for choice in choices %}
+                                        {% if choice.question == question %}
+                                        <input type="radio" id="id_choice-{{ choice.question.id }}" name="choice-{{choice.question.id}}" value="{{ choice }}">
+                                        <label for="id_choice-{{ choice.question.id }}">{{ choice }}</label><br>
+                                        {% endif %}
+                                      {% endfor %}
+                                    </div>
+                                  </div>
+                                  <div class="form-group">
+                                    <label for="orientacoes" class="col-form-label">Orientações:</label>
+                                    <input type="text" name="orientacoes-{{question.id}}" class="form-control">
+                                  </div>
+                                  <div class="form-group">
+                                    <label for="vencimento" class="col-form-label">Vencimento:</label>
+                                    <input type="date" name="vencimento-{{question.id}}" class="form-control">
+                                  </div>
+                                  <div class="form-group">
+                                    <label for="comentario" class="col-form-label">Observação:</label>
+                                    <input type="text" name="comentario-{{question.id}}" class="form-control">
+                                  </div>
+                                  {% endif %}
+                                  {% endfor %}
+                              </div>
+                              <div class="tab-pane fade" id="despensa" role="tabpanel" aria-labelledby="profile-tab">
+                              {% for question in questions %}
+                                  {% if question.qsection|lower == 'Despensa'|lower %}
+                                    <div class="form-group">
+                                      <label for="question_text" class="col-form-label">{{ question.question_text }}</label>
+                                      <div>
+                                        {% for choice in choices %}
+                                          {% if choice.question == question %}
+                                          <input type="radio" id="id_choice-{{ choice.question.id }}" name="choice-{{choice.question.id}}" value="{{ choice }}">
+                                          <label for="id_choice-{{ choice.question.id }}">{{ choice }}</label><br>
+                                          {% endif %}
+                                        {% endfor %}
+                                      </div>
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="orientacoes" class="col-form-label">Orientações:</label>
+                                      <input type="text" name="orientacoes-{{question.id}}" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="vencimento" class="col-form-label">Vencimento:</label>
+                                      <input type="date" name="vencimento-{{question.id}}" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="comentario" class="col-form-label">Observação:</label>
+                                      <input type="text" name="comentario-{{question.id}}" class="form-control">
+                                    </div>
+                                    {% endif %}
+                                    {% endfor %}
+                              </div>
+                              <div class="tab-pane fade" id="alimentacao" role="tabpanel" aria-labelledby="profile-tab">
+                              {% for question in questions %}
+                                  {% if question.qsection|lower == 'Alimentação'|lower %}
+                                    <div class="form-group">
+                                      <label for="question_text" class="col-form-label">{{ question.question_text }}</label>
+                                      <div>
+                                        {% for choice in choices %}
+                                          {% if choice.question == question %}
+                                          <input type="radio" id="id_choice-{{ choice.question.id }}" name="choice-{{choice.question.id}}" value="{{ choice }}">
+                                          <label for="id_choice-{{ choice.question.id }}">{{ choice }}</label><br>
+                                          {% endif %}
+                                        {% endfor %}
+                                      </div>
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="orientacoes" class="col-form-label">Orientações:</label>
+                                      <input type="text" name="orientacoes-{{question.id}}" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="vencimento" class="col-form-label">Vencimento:</label>
+                                      <input type="date" name="vencimento-{{question.id}}" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="comentario" class="col-form-label">Observação:</label>
+                                      <input type="text" name="comentario-{{question.id}}" class="form-control">
+                                    </div>
+                                    {% endif %}
+                                    {% endfor %}
+                              </div>
+                              <div class="tab-pane fade" id="armazenamento" role="tabpanel" aria-labelledby="profile-tab">
+                              {% for question in questions %}
+                                  {% if question.qsection|lower == 'Armazenamento'|lower %}
+                                    <div class="form-group">
+                                      <label for="question_text" class="col-form-label">{{ question.question_text }}</label>
+                                      <div>
+                                        {% for choice in choices %}
+                                          {% if choice.question == question %}
+                                          <input type="radio" id="id_choice-{{ choice.question.id }}" name="choice-{{choice.question.id}}" value="{{ choice }}">
+                                          <label for="id_choice-{{ choice.question.id }}">{{ choice }}</label><br>
+                                          {% endif %}
+                                        {% endfor %}
+                                      </div>
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="orientacoes" class="col-form-label">Orientações:</label>
+                                      <input type="text" name="orientacoes-{{question.id}}" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="vencimento" class="col-form-label">Vencimento:</label>
+                                      <input type="date" name="vencimento-{{question.id}}" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="comentario" class="col-form-label">Observação:</label>
+                                      <input type="text" name="comentario-{{question.id}}" class="form-control">
+                                    </div>
+                                    {% endif %}
+                                    {% endfor %}
+                              </div>
+                              <div class="tab-pane fade" id="sobre_atendentes" role="tabpanel" aria-labelledby="profile-tab">
+                              {% for question in questions %}
+                                  {% if question.qsection|lower == 'Sobre os Atendentes'|lower %}
+                                    <div class="form-group">
+                                      <label for="question_text" class="col-form-label">{{ question.question_text }}</label>
+                                      <div>
+                                        {% for choice in choices %}
+                                          {% if choice.question == question %}
+                                          <input type="radio" id="id_choice-{{ choice.question.id }}" name="choice-{{choice.question.id}}" value="{{ choice }}">
+                                          <label for="id_choice-{{ choice.question.id }}">{{ choice }}</label><br>
+                                          {% endif %}
+                                        {% endfor %}
+                                      </div>
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="orientacoes" class="col-form-label">Orientações:</label>
+                                      <input type="text" name="orientacoes-{{question.id}}" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="vencimento" class="col-form-label">Vencimento:</label>
+                                      <input type="date" name="vencimento-{{question.id}}" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="comentario" class="col-form-label">Observação:</label>
+                                      <input type="text" name="comentario-{{question.id}}" class="form-control">
+                                    </div>
+                                    {% endif %}
+                                    {% endfor %}
+                              </div>
+                              <div class="tab-pane fade" id="info_atendentes" role="tabpanel" aria-labelledby="profile-tab">
+                              {% for question in questions %}
+                                  {% if question.qsection|lower == 'Informações dos Atendentes'|lower %}
+                                    <div class="form-group">
+                                      <label for="question_text" class="col-form-label">{{ question.question_text }}</label>
+                                      <div>
+                                        {% for choice in choices %}
+                                          {% if choice.question == question %}
+                                          <input type="radio" id="id_choice-{{ choice.question.id }}" name="choice-{{choice.question.id}}" value="{{ choice }}">
+                                          <label for="id_choice-{{ choice.question.id }}">{{ choice }}</label><br>
+                                          {% endif %}
+                                        {% endfor %}
+                                      </div>
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="orientacoes" class="col-form-label">Orientações:</label>
+                                      <input type="text" name="orientacoes-{{question.id}}" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="vencimento" class="col-form-label">Vencimento:</label>
+                                      <input type="date" name="vencimento-{{question.id}}" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="comentario" class="col-form-label">Observação:</label>
+                                      <input type="text" name="comentario-{{question.id}}" class="form-control">
+                                    </div>
+                                    {% endif %}
+                                    {% endfor %}
+                            </div>
+                            <div class="tab-pane fade" id="anexos" role="tabpanel" aria-labelledby="contact-tab">
+                              {% for n in '012345'|make_list %}
+                                <div class="form-group field-fotos">
+                                  <div>
+                                    <label for="id_fotos">Foto {{ forloop.counter }}:</label>
+                                    <input type="file" name="foto_{{ forloop.counter }}" accept="image/*" id="id_foto_{{ forloop.counter }}">
+                                  </div>
+                                </div>
+                              {% endfor %}
+
+                              <hr>
+                              <input type="submit" name="var_name" value="Concluir Cadastro" class="btn btn-block btn-secondary">
+                            </div>
+                          </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

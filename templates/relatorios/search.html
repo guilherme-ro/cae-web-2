@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% load humanize %}
+
+{% block title %} | Search PG {% endblock %}
+
+{% block content %}
+<section id="showcase-inner" class="showcase-search text-white py-5">
+    <div class="container">
+      <div class="row text-center">
+        <div class="col-md-12">
+          <form action="{% url 'relatorios:search' %}">
+            <!-- Form Row 1 -->
+            <div class="form-row">
+              <div class="col-md-6 mb-3">
+                <label class="sr-only">Keywords</label>
+                <input type="text" name="keywords" class="form-control" placeholder="Busca por nome do Relatório" value="{{ values.keywords }}">
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label class="sr-only">Escola</label>
+                <input type="text" name="escola" class="form-control" placeholder="Busca por nome da Escola" value="{{ values.escola }}">
+              </div>
+            </div>
+
+
+            <button class="btn btn-secondary btn-block mt-4" type="submit">Buscar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Breadcrumb -->
+  <section id="bc" class="mt-3">
+    <div class="container">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a href="{% url 'index' %}">
+              <i class="fas fa-home"></i> Início</a>
+          </li>
+          <li class="breadcrumb-item">
+            <a href="{% url 'about' %}">Pesquisar Resultados</a>
+          </li>
+          <li class="breadcrumb-item active"> Pesquisar</li>
+        </ol>
+      </nav>
+    </div>
+  </section>
+
+  <!-- Relatorios -->
+  <section id="listings" class="py-4">
+    <div class="container">
+      <div class="row">
+        {% if relatorios %}
+            {% for relatorio in relatorios %}
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12 mb-4">
+                            <div class="card listing-preview">
+                                <div class="card-body">
+                                <div class="listing-heading text-center text-md-left d-md-flex align-items-md-center">
+                                    <i class="fas fa-book mr-md-2"></i>
+                                    <h5 class="text-primary mb-0">{{ relatorio.titulo }}</h5>
+                                    <p>
+                                </div>
+                                <hr>
+                                <div class="row py-2">
+                                    <div class="col-6">
+                                    <i class="fas fa-graduation-cap text-primary"></i> Escola: {{ relatorio.escola }}</div>
+                                    <div class="col-6">
+                                    <i class="fas fa-user"></i> Representante CAE: {{ relatorio.cae_rep }}</div>
+                                </div>
+                                <div class="row py-2">
+                                    <div class="col-6">
+                                    <i class="fas fa-user text-primary"></i> Representante Escola: {{ relatorio.escola_rep }}</div>
+                                    <div class="col-6">
+                                    <i class="fas fa-user-tie"></i> Diretor Escola: {{ relatorio.escola_direcao }}</div>
+                                </div>
+                                <hr>
+                                <a href="/relatorios/{{ relatorio.id }}" class="btn btn-primary">Mais Informações</a>
+                                
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+          <div class="col-md-12">
+            <p>Relatório não Encontrado</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+  {% endblock %}
+
+
+

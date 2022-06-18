@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../sistema_visita/static/css/all.css">
+    <link rel="stylesheet" href="../../sistema_visita/static/css/bootstrap.css">
+    <link rel="stylesheet" href="../../sistema_visita/static/css/style.css">
+    <title>{{ relatorio.titulo }}</title>
+    <style>
+        @page {
+            size: a4 portrait;
+            @frame header_frame {           /* Static Frame */
+                -pdf-frame-content: header_content;
+                left: 50pt; width: 512pt; top: 50pt; height: 40pt;
+            }
+            @frame content_frame {          /* Content Frame */
+                left: 50pt; width: 512pt; top: 90pt; height: 632pt;
+            }
+            @frame footer_frame {           /* Another static Frame */
+                -pdf-frame-content: footer_content;
+                left: 530pt; width: 512pt; top: 772pt; height: 30pt;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Content for Static Frame 'header_frame' -->
+    <div id="header_content">
+        Header: {{ relatorio.titulo }}
+    </div>
+
+    <!-- Content for Static Frame 'footer_frame' -->
+    <div class="card-body border rounded mb-4">
+        <div class="form-group">
+          <h4>{{ relatorio.titulo }}</h4>
+        </div>
+        <div class="form-group">
+          <label for="escola_nome" class="col-form-label font-weight-bold">Escola:</label>
+          {{ relatorio.escola.nome }}
+        </div>
+        <div class="form-group">
+          <label for="escola_nome" class="col-form-label font-weight-bold">Telefone:</label>
+          {{ relatorio.escola.telefone }}
+        </div>
+        <div class="form-group">
+          <label for="escola_nome" class="col-form-label font-weight-bold">Endereço:</label>
+          {{ relatorio.escola.endereco }}
+        </div>
+        <div class="form-group">
+          <label for="escola_nome" class="col-form-label font-weight-bold">Diretor(a):</label>
+          {{ relatorio.escola.diretor }}
+        </div>
+        <div class="form-group">
+          <label for="cae_rep_name" class="col-form-label font-weight-bold">Representante CAE:</label>
+          {{ relatorio.cae_rep }}
+        </div>
+        <div class="form-group">
+          <label for="escola_rep_name" class="col-form-label font-weight-bold">Representante da Escola:</label>
+          {{ relatorio.escola_rep }}
+        </div>
+        <div class="form-group">
+          <label for="escola_rep_name" class="col-form-label font-weight-bold">Data:</label>
+          {{ relatorio.data_relatorio }}
+        </div>
+        <div class="form-group">
+          <label for="escola_rep_name" class="col-form-label font-weight-bold">Horário da Visita: Das</label>
+          {{ relatorio.hora_inicio }}
+          <label for="escola_rep_name" class="col-form-label font-weight-bold">às:</label>
+          {{ relatorio.hora_fim }}
+        </div>
+        <div class="form-group">
+          <label for="escola_rep_name" class="col-form-label font-weight-bold">Número de Alunos atendidos por dia:</label>
+          {{ relatorio.escola.alunos_atendidos_dia }}
+        </div>
+        <div class="form-group">
+          <label for="escola_rep_name" class="col-form-label font-weight-bold">Total de Alunos Matriculados:</label>
+          {{ relatorio.escola.total_alunos_matric }}
+        </div>
+        <div class="form-group">
+          <label for="escola_rep_name" class="col-form-label font-weight-bold">Período de Atendimento:</label>
+          <pre>{% if relatorio.escola.p_manha %}(X){% else %}( ){% endif %} Manhã  {% if relatorio.escola.p_tarde %}(X){% else %}( ){% endif %} Tarde  {% if relatorio.escola.p_noite %}(X){% else %}( ){% endif %} Noite  {% if relatorio.escola.p_integral %}(X){% else %}( ){% endif %} Integral</pre>
+        </div>
+
+        <div class="documentacao mb-4">
+          <div class="sec-title text-center"><h4>Documentação</h4></div>
+          <div class="sec-questions">
+            {% for question in questions %}
+                {% if question.qsection|lower == 'Documentação'|lower %}
+                  <div class="form-group">
+                    <label for="question_text" class="col-form-label">{{ question.question_text }}</label>
+                    <div>
+                      {% for rel in rel_questions %}
+                          {% if relatorio.id == rel.rel_id and question.id == rel.question_id %}
+                              <div class="d-flex w-100">
+                                {% for choice in choices %}
+                                    {% if choice.question == question %}  
+                                          <pre>{% if rel.choice|lower == choice|lower %}  (X) {% else %}  ( ) {% endif %}{{ choice }}</pre>
+                                    {% endif %}
+                                {% endfor %}
+                              </div>
+                              <div class="form-group">
+                                  <label for="orientacoes-{{ question.id }}" class="col-form-label font-weight-bold">Orientações:</label>
+                                  <span>{{ rel.orientacoes }}</span>
+                                </div>
+                                <div class="form-group">
+                                  <label for="vencimento-{{ question.id }}" class="col-form-label font-weight-bold">Vencimento:</label>
+                                  <span>{{ rel.vencimento }}</span>
+                                </div>
+                                <div class="form-group">
+                                  <label for="comentario-{{ question.id }}" class="col-form-label font-weight-bold">Observação:</label>
+                                  <span>{{ rel.comentario }}</span>
+                                </div>
+                          {% endif %}
+                      {% endfor %}
+                    </div>
+                  </div>
+
+
+                    {% endif %}
+                {% endfor %}
+            </div>
+            </div>
+
+            <div class="cozinha mb-4">
+            <div class="sec-title text-center"><h4>Cozinha</h4></div>
+            <div class="sec-questions">
+                {% for question in questions %}
+                    {% if question.qsection|lower == 'Cozinha'|lower %}
+                    <div class="form-group">
+                        <label for="question_text" class="col-form-label">{{ question.question_text }}</label>
+                        <div>
+                        {% for rel in rel_questions %}
+                            {% if relatorio.id == rel.rel_id and question.id == rel.question_id %}
+                                <div class="d-flex w-100">
+                                    {% for choice in choices %}
+                                        {% if choice.question == question %}  
+                                            <pre>{% if rel.choice|lower == choice|lower %}  (X) {% else %}  ( ) {% endif %}{{ choice }}</pre>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                <div class="form-group">
+                                    <label for="orientacoes-{{ question.id }}" class="col-form-label font-weight-bold">Orientações:</label>
+                                    <span>{{ rel.orientacoes }}</span>
+                                    </div>
+                                    <div class="form-group">
+                                    <label for="vencimento-{{ question.id }}" class="col-form-label font-weight-bold">Vencimento:</label>
+                                    <span>{{ rel.vencimento }}</span>
+                                    </div>
+                                    <div class="form-group">
+                                    <label for="comentario-{{ question.id }}" class="col-form-label font-weight-bold">Observação:</label>
+                                    <span>{{ rel.comentario }}</span>
+                                    </div>
+                            {% endif %}
+                        {% endfor %}
+                        </div>
+                    </div>
+
+
+                    {% endif %}
+                {% endfor %}
+            </div>
+            </div>
+
+            <div class="despensa mb-4">
+            <div class="sec-title text-center"><h4>Despensa</h4></div>
+            <div class="sec-questions">
+                {% for question in questions %}
+                    {% if question.qsection|lower == 'Despensa'|lower %}
+                    <div class="form-group">
+                        <label for="question_text" class="col-form-label">{{ question.question_text }}</label>
+                        <div>
+                        {% for rel in rel_questions %}
+                            {% if relatorio.id == rel.rel_id and question.id == rel.question_id %}
+                                <div class="d-flex w-100">
+                                    {% for choice in choices %}
+                                        {% if choice.question == question %}  
+                                            <pre>{% if rel.choice|lower == choice|lower %}  (X) {% else %}  ( ) {% endif %}{{ choice }}</pre>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                <div class="form-group">
+                                    <label for="orientacoes-{{ question.id }}" class="col-form-label font-weight-bold">Orientações:</label>
+                                    <span>{{ rel.orientacoes }}</span>
+                                    </div>
+                                    <div class="form-group">
+                                    <label for="vencimento-{{ question.id }}" class="col-form-label font-weight-bold">Vencimento:</label>
+                                    <span>{{ rel.vencimento }}</span>
+                                    </div>
+                                    <div class="form-group">
+                                    <label for="comentario-{{ question.id }}" class="col-form-label font-weight-bold">Observação:</label>
+                                    <span>{{ rel.comentario }}</span>
+                                    </div>
+                            {% endif %}
+                        {% endfor %}
+                        </div>
+                    </div>
+
+
+                    {% endif %}
+                {% endfor %}
+            </div>
+            </div>
+
+            <div class="alimentacao mb-4">
+            <div class="sec-title text-center"><h4>Alimentação Escolar</h4></div>
+            <div class="sec-questions">
+                {% for question in questions %}
+                    {% if question.qsection|lower == 'Alimentação'|lower %}
+                    <div class="form-group">
+                        <label for="question_text" class="col-form-label">{{ question.question_text }}</label>
+                        <div>
+                        {% for rel in rel_questions %}
+                            {% if relatorio.id == rel.rel_id and question.id == rel.question_id %}
+                                <div class="d-flex w-100">
+                                    {% for choice in choices %}
+                                        {% if choice.question == question %}  
+                                            <pre>{% if rel.choice|lower == choice|lower %}  (X) {% else %}  ( ) {% endif %}{{ choice }}</pre>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                <div class="form-group">
+                                    <label for="orientacoes-{{ question.id }}" class="col-form-label font-weight-bold">Orientações:</label>
+                                    <span>{{ rel.orientacoes }}</span>
+                                    </div>
+                                    <div class="form-group">
+                                    <label for="vencimento-{{ question.id }}" class="col-form-label font-weight-bold">Vencimento:</label>
+                                    <span>{{ rel.vencimento }}</span>
+                                    </div>
+                                    <div class="form-group">
+                                    <label for="comentario-{{ question.id }}" class="col-form-label font-weight-bold">Observação:</label>
+                                    <span>{{ rel.comentario }}</span>
+                                    </div>
+                            {% endif %}
+                        {% endfor %}
+                        </div>
+                    </div>
+
+
+                    {% endif %}
+                {% endfor %}
+            </div>
+            </div>
+
+            <div class="armazenamento mb-4">
+            <div class="sec-title text-center"><h4>Armazenamento / Qualidade / Higienização de Produtos e Equipamentos</h4></div>
+            <div class="sec-questions">
+                {% for question in questions %}
+                    {% if question.qsection|lower == 'Armazenamento'|lower %}
+                    <div class="form-group">
+                        <label for="question_text" class="col-form-label">{{ question.question_text }}</label>
+                        <div>
+                        {% for rel in rel_questions %}
+                            {% if relatorio.id == rel.rel_id and question.id == rel.question_id %}
+                                <div class="d-flex w-100">
+                                    {% for choice in choices %}
+                                        {% if choice.question == question %}  
+                                            <pre>{% if rel.choice|lower == choice|lower %}  (X) {% else %}  ( ) {% endif %}{{ choice }}</pre>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                <div class="form-group">
+                                    <label for="orientacoes-{{ question.id }}" class="col-form-label font-weight-bold">Orientações:</label>
+                                    <span>{{ rel.orientacoes }}</span>
+                                    </div>
+                                    <div class="form-group">
+                                    <label for="vencimento-{{ question.id }}" class="col-form-label font-weight-bold">Vencimento:</label>
+                                    <span>{{ rel.vencimento }}</span>
+                                    </div>
+                                    <div class="form-group">
+                                    <label for="comentario-{{ question.id }}" class="col-form-label font-weight-bold">Observação:</label>
+                                    <span>{{ rel.comentario }}</span>
+                                    </div>
+                            {% endif %}
+                        {% endfor %}
+                        </div>
+                    </div>
+
+
+                    {% endif %}
+                {% endfor %}
+            </div>
+            </div>
+
+            <div class="sobre-atendentes mb-4">
+            <div class="sec-title text-center"><h4>Sobre os Atendentes</h4></div>
+            <div class="sec-questions">
+                {% for question in questions %}
+                    {% if question.qsection|lower == 'Sobre os Atendentes'|lower %}
+                    <div class="form-group">
+                        <label for="question_text" class="col-form-label">{{ question.question_text }}</label>
+                        <div>
+                        {% for rel in rel_questions %}
+                            {% if relatorio.id == rel.rel_id and question.id == rel.question_id %}
+                                <div class="d-flex w-100">
+                                    {% for choice in choices %}
+                                        {% if choice.question == question %}  
+                                            <pre>{% if rel.choice|lower == choice|lower %}  (X) {% else %}  ( ) {% endif %}{{ choice }}</pre>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                <div class="form-group">
+                                    <label for="orientacoes-{{ question.id }}" class="col-form-label font-weight-bold">Orientações:</label>
+                                    <span>{{ rel.orientacoes }}</span>
+                                    </div>
+                                    <div class="form-group">
+                                    <label for="vencimento-{{ question.id }}" class="col-form-label font-weight-bold">Vencimento:</label>
+                                    <span>{{ rel.vencimento }}</span>
+                                    </div>
+                                    <div class="form-group">
+                                    <label for="comentario-{{ question.id }}" class="col-form-label font-weight-bold">Observação:</label>
+                                    <span>{{ rel.comentario }}</span>
+                                    </div>
+                            {% endif %}
+                        {% endfor %}
+                        </div>
+                    </div>
+
+
+                    {% endif %}
+                {% endfor %}
+            </div>
+            </div>
+
+            <div class="info-atendentes mb-4">
+            <div class="sec-title text-center"><h4>Informações dos Atendentes</h4></div>
+            <div class="sec-questions">
+                {% for question in questions %}
+                    {% if question.qsection|lower == 'Informações dos Atendentes'|lower %}
+                    <div class="form-group">
+                        <label for="question_text" class="col-form-label">{{ question.question_text }}</label>
+                        <div>
+                        {% for rel in rel_questions %}
+                            {% if relatorio.id == rel.rel_id and question.id == rel.question_id %}
+                                <div class="d-flex w-100">
+                                    {% for choice in choices %}
+                                        {% if choice.question == question %}  
+                                            <pre>{% if rel.choice|lower == choice|lower %}  (X) {% else %}  ( ) {% endif %}{{ choice }}</pre>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                <div class="form-group">
+                                    <label for="orientacoes-{{ question.id }}" class="col-form-label font-weight-bold">Orientações:</label>
+                                    <span>{{ rel.orientacoes }}</span>
+                                    </div>
+                                    <div class="form-group">
+                                    <label for="vencimento-{{ question.id }}" class="col-form-label font-weight-bold">Vencimento:</label>
+                                    <span>{{ rel.vencimento }}</span>
+                                    </div>
+                                    <div class="form-group">
+                                    <label for="comentario-{{ question.id }}" class="col-form-label font-weight-bold">Observação:</label>
+                                    <span>{{ rel.comentario }}</span>
+                                    </div>
+                            {% endif %}
+                        {% endfor %}
+                        </div>
+                    </div>
+
+
+                    {% endif %}
+                {% endfor %}
+            </div>
+            </div>
+
+    </div>
+    <div id="footer_content"><pdf:pagenumber>/<pdf:pagecount>
+    </div>
+
+
+</body>
+</html>
