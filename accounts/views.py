@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib import messages, auth
 from django.contrib.auth.models import User
 from relatorios.models import Relatorio
+import json
+from django.http import JsonResponse 
 
 def register(request):
     if request.method == 'POST':
@@ -39,6 +41,7 @@ def register(request):
 
 def login(request):
     if request.method == 'POST':
+        
         username = request.POST['username']
         password = request.POST['password']
 
@@ -69,3 +72,33 @@ def dashboard(request):
     }
 
     return render(request, 'accounts/dashboard.html', context)
+
+def google(request):
+    if request.method == 'POST':
+
+        data = json.loads(request.body)
+
+        if data['email_verified'] == True:
+
+            username = data['email']
+            password = data['sub']
+
+            user = auth.authenticate(username=username, password=password)
+            print(user)
+            if user is None:
+                first_name = data['given_name']
+                last_name = data['family_name']
+                email = data['email']
+
+                user = User.objects.create_user(username=username, password=password, email=email, 
+                first_name=first_name, last_name=last_name)
+                user.save()
+
+            if user is not None:   
+                user = auth.authenticate(username=username, password=password)
+                auth.login(request, user)
+                messages.success(request, 'Você agora está logado no sistema')
+            #print('dashboard')
+            #print(data['email_verified'])
+
+        return JsonResponse({"status": 'Success'}) 

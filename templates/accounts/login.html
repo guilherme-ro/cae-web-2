@@ -15,7 +15,7 @@
             <div class="card-body">
               <!-- Alerts -->
               {% include 'partials/_alerts.html' %}
-                <form action="{% url 'login' %}" method="POST">
+               <form action="{% url 'login' %}" method="POST">
                   {% csrf_token %}
                 <div class="form-group">
                   <label for="username">Nome de Usuário</label>
@@ -28,6 +28,14 @@
                 </div>
 
                 <input type="submit" value="Login" class="btn btn-secondary btn-block">
+                
+              </form>
+              <form action="{% url 'google' %}" method="POST">
+                {% csrf_token %}
+                <div id="buttonDiv" class="pt-3"></div> 
+              </form>
+              
+                
               </form>
             </div>
           </div>

@@ -71,6 +71,35 @@ img {
   min-height: 50vh;
 }
 
+#myBtn {
+  display: none; 
+  position: fixed; 
+  bottom: 20px; 
+  right: 30px; 
+  z-index: 99; 
+  border: none;
+  outline: none;
+  background-color: #10284e; 
+  color: white; 
+  cursor: pointer; 
+  padding: 15px; 
+  border-radius: 10px; 
+  font-size: 18px; 
+}
+
+#myBtn:hover {
+  background-color: #555; /* Add a dark-grey background on hover */
+}
+
+#buttonDiv iframe {
+  width: 100% !important;
+  margin: 0 !important;
+}
+.haAclface {
+  padding: 0 !important;
+  display: block !important;
+}
+
 @media (min-width: 992px) {
  
   .dashboard-links a {

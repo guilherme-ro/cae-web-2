@@ -23,9 +23,18 @@
     <!-- Footer -->
     {% include 'partials/_footer.html' %}
 
-<script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
-<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-<script src="{% static 'js/lightbox.min.js' %}"></script>
-<script src="{% static 'js/main.js' %}"></script>
+    <!--<button onclick="topFunction()" id="myBtn" title="Voltar pro Topo">Topo</button>-->
+    <a href="#top-bar" id="myBtn" title="Voltar pro Topo">Topo</a>
+    <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/lightbox.min.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://unpkg.com/jwt-decode/build/jwt-decode.js" async defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+    <script>
+        axios.defaults.xsrfCookieName = 'csrftoken';
+        axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN';
+    </script>
 </body>
 </html>
